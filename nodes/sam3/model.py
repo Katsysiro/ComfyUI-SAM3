@@ -1577,8 +1577,10 @@ class TransformerDecoder(nn.Module):
             self.instance_query_embed = operations.Embedding(num_instances, d_model, dtype=dtype, device=device)
         self.box_refine = box_refine
         if box_refine:
-            nn.init.constant_(self.bbox_embed.layers[-1].weight.data, 0)
-            nn.init.constant_(self.bbox_embed.layers[-1].bias.data, 0)
+            if self.bbox_embed.layers[-1].weight is not None:
+                nn.init.constant_(self.bbox_embed.layers[-1].weight.data, 0)
+                nn.init.constant_(self.bbox_embed.layers[-1].bias.data, 0)
+
             self.reference_points = operations.Embedding(num_queries, 4, dtype=dtype, device=device)
             if instance_query:
                 self.instance_reference_points = operations.Embedding(num_instances, 4, dtype=dtype, device=device)
